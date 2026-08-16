@@ -1,0 +1,62 @@
+CREATE DATABASE IF NOT EXISTS barbearia
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE barbearia;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
+  senha VARCHAR(255) NOT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS clientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  telefone VARCHAR(20),
+  email VARCHAR(150),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS barbeiros (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  especialidade VARCHAR(150),
+  telefone VARCHAR(20),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS cabeleireiros (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  especialidade VARCHAR(150),
+  telefone VARCHAR(20),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS agendamentos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  tipo_profissional ENUM('barbeiro', 'cabeleireiro') NOT NULL DEFAULT 'barbeiro',
+  profissional_id INT NOT NULL,
+  servico VARCHAR(150) NOT NULL,
+  valor DECIMAL(10,2) DEFAULT 0,
+  data DATE NOT NULL,
+  hora TIME NOT NULL,
+  status ENUM('Agendado', 'Confirmado', 'Concluído', 'Cancelado') NOT NULL DEFAULT 'Agendado',
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_agendamento_cliente FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS movimentacoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tipo ENUM('entrada', 'saida') NOT NULL,
+  descricao VARCHAR(255) NOT NULL,
+  valor DECIMAL(10,2) NOT NULL,
+  forma ENUM('Dinheiro', 'Pix', 'Cartao', 'Debito') NOT NULL DEFAULT 'Dinheiro',
+  data DATE NOT NULL,
+  hora TIME NOT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

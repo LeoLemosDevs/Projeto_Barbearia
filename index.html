@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barbearia | Sistema</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="login-container" id="loginView">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-logo">B</div>
+        <h1>Barbearia</h1>
+        <p>Faça login para agendar seu horário</p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            required
+          >
+          <small class="error-message"></small>
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label for="password">Senha</label>
+            <a href="#" class="forgot-link">Esqueci minha senha</a>
+          </div>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Digite sua senha"
+              autocomplete="current-password"
+              required
+            >
+            <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar senha">
+              <span class="eye-icon">&#128065;</span>
+            </button>
+          </div>
+          <small class="error-message"></small>
+        </div>
+
+        <button type="submit" class="btn-primary">Entrar</button>
+
+        <p class="signup-text">
+          Não tem conta? <a href="#">Cadastre-se</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <div class="app hidden" id="appView">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo small">B</div>
+        <span>Barbearia</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="home">Início</button>
+        <button class="nav-item" data-view="clientes">Clientes</button>
+        <button class="nav-item" data-view="barbeiros">Barbeiros</button>
+        <button class="nav-item" data-view="cabeleireiros">Cabeleireiros</button>
+        <button class="nav-item" data-view="agenda">Agenda</button>
+        <button class="nav-item" data-view="caixa">Caixa</button>
+        <button class="nav-item" data-view="financeiro">Financeiro</button>
+      </nav>
+      <button class="logout-btn" id="logoutBtn">Sair</button>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">&#9776;</button>
+        <h2 id="pageTitle">Início</h2>
+        <span class="topbar-user" id="topbarUser"></span>
+      </header>
+
+      <main class="content">
+
+        <section class="view active" data-view="home">
+          <div class="cards-grid">
+            <div class="stat-card"><span id="statClientes">0</span><p>Clientes cadastrados</p></div>
+            <div class="stat-card"><span id="statBarbeiros">0</span><p>Barbeiros</p></div>
+            <div class="stat-card"><span id="statCabelos">0</span><p>Cabeleireiros</p></div>
+            <div class="stat-card"><span id="statAgendaHoje">0</span><p>Agendamentos hoje</p></div>
+            <div class="stat-card highlight"><span id="statCaixaHoje">R$ 0,00</span><p>Caixa do dia</p></div>
+          </div>
+          <div class="panel">
+            <h3>Próximos agendamentos</h3>
+            <div id="homeAgendaList" class="list"></div>
+          </div>
+        </section>
+
+        <section class="view" data-view="clientes">
+          <div class="panel">
+            <h3 id="clientesTitle">Cadastro de Clientes</h3>
+            <form id="formCliente" class="form-grid" novalidate>
+              <input type="hidden" name="editId">
+              <div class="form-group">
+                <label for="clienteNome">Nome</label>
+                <input type="text" id="clienteNome" name="nome" placeholder="Nome completo" required>
+              </div>
+              <div class="form-group">
+                <label for="clienteTelefone">Telefone</label>
+                <input type="tel" id="clienteTelefone" name="telefone" placeholder="(11) 99999-0000">
+              </div>
+              <div class="form-group">
+                <label for="clienteEmail">E-mail</label>
+                <input type="email" id="clienteEmail" name="email" placeholder="cliente@email.com">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Salvar</button>
+                <button type="button" class="btn-cancel btn-secondary hidden">Cancelar</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Clientes cadastrados</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="tbodyClientes"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="barbeiros">
+          <div class="panel">
+            <h3 id="barbeirosTitle">Cadastro de Barbeiros</h3>
+            <form id="formBarbeiro" class="form-grid" novalidate>
+              <input type="hidden" name="editId">
+              <div class="form-group">
+                <label for="barbeiroNome">Nome</label>
+                <input type="text" id="barbeiroNome" name="nome" placeholder="Nome do barbeiro" required>
+              </div>
+              <div class="form-group">
+                <label for="barbeiroEspecialidade">Especialidade</label>
+                <input type="text" id="barbeiroEspecialidade" name="especialidade" placeholder="Ex.: Corte, Barba, Degradê">
+              </div>
+              <div class="form-group">
+                <label for="barbeiroTelefone">Telefone</label>
+                <input type="tel" id="barbeiroTelefone" name="telefone" placeholder="(11) 99999-0000">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Salvar</button>
+                <button type="button" class="btn-cancel btn-secondary hidden">Cancelar</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Barbeiros cadastrados</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Nome</th><th>Especialidade</th><th>Telefone</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="tbodyBarbeiros"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="cabeleireiros">
+          <div class="panel">
+            <h3 id="cabeleireirosTitle">Cadastro de Cabeleireiros</h3>
+            <form id="formCabeleireiro" class="form-grid" novalidate>
+              <input type="hidden" name="editId">
+              <div class="form-group">
+                <label for="cabNome">Nome</label>
+                <input type="text" id="cabNome" name="nome" placeholder="Nome do cabeleireiro" required>
+              </div>
+              <div class="form-group">
+                <label for="cabEspecialidade">Especialidade</label>
+                <input type="text" id="cabEspecialidade" name="especialidade" placeholder="Ex.: Coloração, Penteados">
+              </div>
+              <div class="form-group">
+                <label for="cabTelefone">Telefone</label>
+                <input type="tel" id="cabTelefone" name="telefone" placeholder="(11) 99999-0000">
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Salvar</button>
+                <button type="button" class="btn-cancel btn-secondary hidden">Cancelar</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Cabeleireiros cadastrados</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Nome</th><th>Especialidade</th><th>Telefone</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="tbodyCabeleireiros"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="agenda">
+          <div class="panel">
+            <h3>Novo agendamento</h3>
+            <form id="formAgenda" class="form-grid" novalidate>
+              <div class="form-group">
+                <label for="agendaCliente">Cliente</label>
+                <select id="agendaCliente" name="cliente" required></select>
+              </div>
+              <div class="form-group">
+                <label for="agendaTipoProf">Tipo de profissional</label>
+                <select id="agendaTipoProf" name="tipoProf">
+                  <option value="barbeiro">Barbeiro</option>
+                  <option value="cabeleireiro">Cabeleireiro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="agendaProfissional">Profissional</label>
+                <select id="agendaProfissional" name="profissional" required></select>
+              </div>
+              <div class="form-group">
+                <label for="agendaServico">Serviço</label>
+                <input type="text" id="agendaServico" name="servico" placeholder="Ex.: Corte, Barba, Coloração" required>
+              </div>
+              <div class="form-group">
+                <label for="agendaValor">Valor (R$)</label>
+                <input type="number" id="agendaValor" name="valor" min="0" step="0.01" placeholder="0,00">
+              </div>
+              <div class="form-group">
+                <label for="agendaData">Data</label>
+                <input type="date" id="agendaData" name="data" required>
+              </div>
+              <div class="form-group">
+                <label for="agendaHora">Hora</label>
+                <input type="time" id="agendaHora" name="hora" required>
+              </div>
+              <div class="form-group">
+                <label for="agendaStatus">Status</label>
+                <select id="agendaStatus" name="status">
+                  <option>Agendado</option>
+                  <option>Confirmado</option>
+                  <option>Concluído</option>
+                  <option>Cancelado</option>
+                </select>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Agendar</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Agenda</h3>
+            <div class="filters">
+              <input type="date" id="filtroData" aria-label="Filtrar por data">
+              <select id="filtroStatus" aria-label="Filtrar por status">
+                <option value="">Todos os status</option>
+                <option>Agendado</option>
+                <option>Confirmado</option>
+                <option>Concluído</option>
+                <option>Cancelado</option>
+              </select>
+            </div>
+            <div id="agendaList" class="list"></div>
+          </div>
+        </section>
+
+        <section class="view" data-view="caixa">
+          <div class="cards-grid">
+            <div class="stat-card"><span id="caixaEntradas">R$ 0,00</span><p>Entradas hoje</p></div>
+            <div class="stat-card"><span id="caixaSaidas">R$ 0,00</span><p>Saídas hoje</p></div>
+            <div class="stat-card highlight"><span id="caixaTotal">R$ 0,00</span><p>Total do dia</p></div>
+          </div>
+          <div class="panel">
+            <h3>Registrar movimentação</h3>
+            <form id="formCaixa" class="form-grid" novalidate>
+              <div class="form-group">
+                <label for="caixaTipo">Tipo</label>
+                <select id="caixaTipo" name="tipo">
+                  <option value="entrada">Entrada</option>
+                  <option value="saida">Saída</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="caixaDescricao">Descrição</label>
+                <input type="text" id="caixaDescricao" name="descricao" placeholder="Ex.: Corte - João Silva" required>
+              </div>
+              <div class="form-group">
+                <label for="caixaValor">Valor (R$)</label>
+                <input type="number" id="caixaValor" name="valor" min="0" step="0.01" placeholder="0,00" required>
+              </div>
+              <div class="form-group">
+                <label for="caixaForma">Forma de pagamento</label>
+                <select id="caixaForma" name="forma">
+                  <option>Dinheiro</option>
+                  <option>Pix</option>
+                  <option>Cartão</option>
+                  <option>Débito</option>
+                </select>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Registrar</button>
+              </div>
+            </form>
+          </div>
+          <div class="panel">
+            <h3>Movimentações de hoje</h3>
+            <div id="caixaList" class="list"></div>
+          </div>
+        </section>
+
+        <section class="view" data-view="financeiro">
+          <div class="cards-grid">
+            <div class="stat-card"><span id="finReceitas">R$ 0,00</span><p>Receitas do mês</p></div>
+            <div class="stat-card"><span id="finDespesas">R$ 0,00</span><p>Despesas do mês</p></div>
+            <div class="stat-card highlight"><span id="finSaldo">R$ 0,00</span><p>Saldo do mês</p></div>
+          </div>
+          <div class="panel">
+            <h3 id="finTitle">Movimentações do mês</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Forma</th><th>Valor</th></tr>
+                </thead>
+                <tbody id="tbodyFinanceiro"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
